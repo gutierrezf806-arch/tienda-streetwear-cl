@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCart } from "@/app/hooks/useCart";
 
 const sizes = ["S", "M", "L", "XL"];
 const colors = ["Negro", "Blanco", "Azul", "Rojo"];
@@ -12,6 +13,28 @@ function formatCLP(price) {
 export default function ProductCard({ image, name, description, price }) {
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
+  const [isAdded, setIsAdded] = useState(false);
+  const { addItem } = useCart();
+
+  const handleAddToCart = () => {
+    if (!selectedSize || !selectedColor) {
+      alert("Selecciona una talla y un color");
+      return;
+    }
+
+    addItem({
+      id: name,
+      name,
+      price,
+      size: selectedSize,
+      color: selectedColor,
+    });
+
+    alert("¡Agregado al carrito!");
+
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1500);
+  };
 
   return (
     <div className="group flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
@@ -77,9 +100,14 @@ export default function ProductCard({ image, name, description, price }) {
 
         <button
           type="button"
-          className="mt-1 w-full rounded-full bg-orange-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-orange-500"
+          onClick={handleAddToCart}
+          className={`mt-1 w-full rounded-full px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors ${
+            isAdded
+              ? "bg-green-600 hover:bg-green-500"
+              : "bg-orange-600 hover:bg-orange-500"
+          }`}
         >
-          Agregar al Carrito
+          {isAdded ? "¡Agregado!" : "Agregar al Carrito"}
         </button>
       </div>
     </div>
