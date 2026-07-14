@@ -1,47 +1,28 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import ProductCard from "./components/ProductCard.jsx";
 
-const products = [
-  {
-    name: "Polera Urban Vibes",
-    description: "Polera oversize de algodón con estampado urbano",
-    price: 18990,
-    image: "",
-  },
-  {
-    name: "Polera Street Life",
-    description: "Polera de corte relajado inspirada en la cultura urbana",
-    price: 18990,
-    image: "",
-  },
-  {
-    name: "Polerón Classic Black",
-    description: "Polerón con capucha en negro, algodón premium",
-    price: 32990,
-    image: "",
-  },
-  {
-    name: "Polerón Bold Red",
-    description: "Polerón con capucha en rojo, diseño llamativo",
-    price: 32990,
-    image: "",
-  },
-  {
-    name: "Polera Minimalist",
-    description: "Polera de diseño minimalista y corte clásico",
-    price: 19990,
-    image: "",
-  },
-  {
-    name: "Polera Retro Style",
-    description: "Polera con estampado retro y ajuste regular",
-    price: 20990,
-    image: "",
-  },
-];
-
 export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data.products);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="flex flex-1 flex-col">
       <Header />
@@ -58,15 +39,21 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:place-items-stretch lg:grid-cols-3">
-            {products.map((product) => (
-              <ProductCard
-                key={product.name}
-                name={product.name}
-                description={product.description}
-                price={product.price}
-                image={product.image}
-              />
-            ))}
+            {loading ? (
+              <p>Cargando productos...</p>
+            ) : products.length === 0 ? (
+              <p>No hay productos</p>
+            ) : (
+              products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  description={product.description}
+                  price={parseInt(product.price)}
+                  image={product.image}
+                />
+              ))
+            )}
           </div>
         </section>
       </main>
