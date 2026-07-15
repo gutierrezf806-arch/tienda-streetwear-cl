@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../components/Header.jsx";
 import { useCart } from "../hooks/useCart.js";
@@ -20,17 +20,57 @@ function formatCLP(value: number) {
   return `$${Math.round(value).toLocaleString("es-CL")}`;
 }
 
-export default function CarritoPage() {
+export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, removeItem, updateQuantity, getCartTotal } = useCart() as {
+  const { cartItems, getCartTotal } = useCart() as {
     cartItems: CartItem[];
-    removeItem: (id: string, size: string, color: string) => void;
-    updateQuantity: (id: string, quantity: number) => void;
     getCartTotal: () => number;
   };
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Checkout - Tu Marca Streetwear";
+  }, []);
 
   const subtotal = getCartTotal();
   const total = subtotal + SHIPPING;
+
+  async function handleCheckout() {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cartItems.map((item) => ({
+            id: item.id,
+            title: item.name,
+            quantity: item.quantity,
+            unit_price: item.price,
+          })),
+          shipping: SHIPPING,
+          back_urls: {
+            success: `${window.location.origin}/checkout/success`,
+            failure: `${window.location.origin}/checkout/failure`,
+            pending: `${window.location.origin}/checkout/pending`,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        window.location.href = data.preferenceLink;
+      } else {
+        alert("Error en pago");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error en pago");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="flex flex-1 flex-col">
@@ -43,18 +83,19 @@ export default function CarritoPage() {
               <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
                 Tu carrito está vacío
               </p>
-              <Link
-                href="/"
+              <button
+                type="button"
+                onClick={() => router.push("/")}
                 className="rounded-full bg-orange-600 px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-orange-500"
               >
                 Ir al catálogo
-              </Link>
+              </button>
             </div>
           ) : (
             <div className="flex flex-col gap-8 lg:flex-row">
               <section className="flex flex-col gap-6 lg:w-[70%]">
                 <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-                  Tu Carrito
+                  Checkout
                 </h1>
 
                 <ul className="flex flex-col gap-4">
@@ -73,38 +114,13 @@ export default function CarritoPage() {
                           Talla: {item.size} · Color: {item.color}
                         </p>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                          Precio unitario: {formatCLP(item.price)}
+                          Cantidad: {item.quantity}
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-                        <label className="flex items-center gap-2">
-                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                            Cantidad
-                          </span>
-                          <input
-                            type="number"
-                            min={1}
-                            value={item.quantity}
-                            onChange={(e) =>
-                              updateQuantity(item.id, Number(e.target.value))
-                            }
-                            className="w-16 rounded-md border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-                          />
-                        </label>
-
-                        <p className="font-semibold text-zinc-900 dark:text-zinc-50">
-                          {formatCLP(item.price * item.quantity)}
-                        </p>
-
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.id, item.size, item.color)}
-                          className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-red-500"
-                        >
-                          Eliminar
-                        </button>
-                      </div>
+                      <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+                        {formatCLP(item.price * item.quantity)}
+                      </p>
                     </li>
                   ))}
                 </ul>
@@ -137,18 +153,12 @@ export default function CarritoPage() {
 
                 <button
                   type="button"
-                  onClick={() => router.push("/checkout")}
-                  className="mt-2 w-full rounded-full bg-orange-600 px-4 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-orange-500"
+                  onClick={handleCheckout}
+                  disabled={loading}
+                  className="mt-2 w-full rounded-full bg-orange-600 px-4 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Ir a Checkout
+                  {loading ? "Redirigiendo..." : "Ir a Mercado Pago"}
                 </button>
-
-                <Link
-                  href="/"
-                  className="w-full rounded-full border border-zinc-300 px-4 py-3 text-center text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                >
-                  Continuar Comprando
-                </Link>
               </aside>
             </div>
           )}

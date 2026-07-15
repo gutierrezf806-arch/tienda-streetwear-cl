@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "tienda-cart";
+const CART_UPDATED_EVENT = "cart-updated";
 
 function readCart() {
   if (typeof window === "undefined") return [];
@@ -21,6 +22,7 @@ function writeCart(items) {
   } catch {
     // localStorage unavailable (private mode, quota, etc.) — ignore
   }
+  window.dispatchEvent(new Event(CART_UPDATED_EVENT));
 }
 
 export function useCart() {
@@ -28,56 +30,52 @@ export function useCart() {
 
   useEffect(() => {
     setCartItems(readCart());
+
+    const handleCartUpdated = () => setCartItems(readCart());
+    window.addEventListener(CART_UPDATED_EVENT, handleCartUpdated);
+    return () => window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdated);
   }, []);
 
   const persist = useCallback((items) => {
-    setCartItems(items);
     writeCart(items);
+    setCartItems(items);
   }, []);
 
-  const addItem = useCallback(
-    (product) => {
-      const { id, name, price, size, color, quantity = 1 } = product;
+  const addItem = useCallback((product) => {
+    const { id, name, price, size, color, quantity = 1 } = product;
 
-      setCartItems((prev) => {
-        const existingIndex = prev.findIndex(
-          (item) => item.id === id && item.size === size && item.color === color
-        );
+    const current = readCart();
+    const existingIndex = current.findIndex(
+      (item) => item.id === id && item.size === size && item.color === color
+    );
 
-        let next;
-        if (existingIndex !== -1) {
-          next = prev.map((item, index) =>
+    const next =
+      existingIndex !== -1
+        ? current.map((item, index) =>
             index === existingIndex
               ? { ...item, quantity: item.quantity + quantity }
               : item
-          );
-        } else {
-          next = [...prev, { id, name, price, quantity, size, color }];
-        }
+          )
+        : [...current, { id, name, price, quantity, size, color }];
 
-        writeCart(next);
-        return next;
-      });
-    },
-    []
-  );
+    writeCart(next);
+    setCartItems(next);
+  }, []);
 
-  const removeItem = useCallback((productId) => {
-    setCartItems((prev) => {
-      const next = prev.filter((item) => item.id !== productId);
-      writeCart(next);
-      return next;
-    });
+  const removeItem = useCallback((productId, size, color) => {
+    const next = readCart().filter(
+      (item) => !(item.id === productId && item.size === size && item.color === color)
+    );
+    writeCart(next);
+    setCartItems(next);
   }, []);
 
   const updateQuantity = useCallback((productId, quantity) => {
-    setCartItems((prev) => {
-      const next = prev.map((item) =>
-        item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
-      );
-      writeCart(next);
-      return next;
-    });
+    const next = readCart().map((item) =>
+      item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
+    );
+    writeCart(next);
+    setCartItems(next);
   }, []);
 
   const clearCart = useCallback(() => {
