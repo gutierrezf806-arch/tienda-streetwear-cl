@@ -6,9 +6,10 @@ import { useCart } from "../hooks/useCart.js";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/catalogo", label: "Catálogo" },
+  { href: "/urban-code", label: "Urban Code" },
+  { href: "/no-limits", label: "No Limits" },
   { href: "/about", label: "About" },
-  { href: "/contacto", label: "Contacto" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {

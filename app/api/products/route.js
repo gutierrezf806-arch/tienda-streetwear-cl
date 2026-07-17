@@ -3,7 +3,7 @@ import path from "path";
 import { google } from "googleapis";
 
 const SPREADSHEET_ID = "14oUqI1o_FJPennbj4wf5RuBaaEQBkUCNUhe2ixfpyXc";
-const RANGE = "Hoja 1!A1:G";
+const RANGE = "Hoja 1!A1:H";
 const CREDENTIALS_PATH = path.join(
   process.cwd(),
   "config",
