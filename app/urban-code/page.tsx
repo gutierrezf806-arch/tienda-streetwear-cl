@@ -14,6 +14,7 @@ type Product = {
   color: string;
   image: string;
   category: string;
+  slug: string;
 };
 
 export default function UrbanCodePage() {
@@ -65,6 +66,7 @@ export default function UrbanCodePage() {
               urbanCodeProducts.map((product) => (
                 <ProductCard
                   key={product.id}
+                  slug={product.slug}
                   name={product.name}
                   description={product.description}
                   price={parseInt(product.price)}
