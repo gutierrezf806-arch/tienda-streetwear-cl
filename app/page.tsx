@@ -47,13 +47,13 @@ export default function Home() {
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
+      <main className="flex flex-1 flex-col bg-brand-black text-brand-cream">
         <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-10 flex flex-col gap-2">
-            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+            <h1 className="font-display text-3xl uppercase tracking-tight text-brand-cream sm:text-4xl">
               Nuestro Catálogo
             </h1>
-            <p className="text-base text-zinc-600 dark:text-zinc-400">
+            <p className="text-base text-brand-cream/70">
               Descubre nuestras polerones y poleras
             </p>
           </div>
@@ -64,10 +64,10 @@ export default function Home() {
                 key={category}
                 type="button"
                 onClick={() => setSelectedCategory(category)}
-                className={`rounded-full px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
+                className={`rounded-full border px-5 py-2 font-display text-sm uppercase tracking-wide transition-colors ${
                   selectedCategory === category
-                    ? "bg-orange-600 text-white"
-                    : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    ? "border-brand-gold bg-brand-gold text-brand-black"
+                    : "border-brand-charcoal text-brand-cream/70 hover:border-brand-gold hover:text-brand-gold"
                 }`}
               >
                 {category}
@@ -77,9 +77,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:place-items-stretch lg:grid-cols-3">
             {loading ? (
-              <p>Cargando productos...</p>
+              <p className="text-brand-cream/70">Cargando productos...</p>
             ) : filteredProducts.length === 0 ? (
-              <p>No hay productos</p>
+              <p className="text-brand-cream/70">No hay productos</p>
             ) : (
               filteredProducts.map((product) => (
                 <ProductCard
@@ -89,6 +89,7 @@ export default function Home() {
                   description={product.description}
                   price={parseInt(product.price)}
                   image={product.image}
+                  category={product.category}
                 />
               ))
             )}

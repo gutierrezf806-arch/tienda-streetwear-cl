@@ -87,39 +87,37 @@ export default function ProductDetailPage() {
     <div className="flex flex-1 flex-col">
       <Header />
 
-      <main className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
+      <main className="flex flex-1 flex-col bg-brand-black text-brand-cream">
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {loading ? (
-            <p className="py-24 text-center text-zinc-600 dark:text-zinc-400">
-              Cargando...
-            </p>
+            <p className="py-24 text-center text-brand-cream/70">Cargando...</p>
           ) : !product ? (
             <div className="flex flex-col items-center gap-4 py-24 text-center">
-              <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
+              <p className="text-lg font-medium text-brand-cream/80">
                 Producto no encontrado
               </p>
               <Link
                 href="/"
-                className="rounded-full bg-orange-600 px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-orange-500"
+                className="rounded-full bg-brand-gold px-6 py-2.5 font-display text-sm uppercase text-brand-black transition-colors hover:bg-brand-red hover:text-brand-cream"
               >
                 Volver al catálogo
               </Link>
             </div>
           ) : (
             <>
-              <nav className="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                <Link href="/" className="transition-colors hover:text-zinc-900 dark:hover:text-zinc-50">
+              <nav className="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-brand-cream/60">
+                <Link href="/" className="transition-colors hover:text-brand-gold">
                   Home
                 </Link>
                 <span>/</span>
-                <span>{product.category}</span>
+                <span className="text-brand-gold">{product.category}</span>
                 <span>/</span>
-                <span className="text-zinc-900 dark:text-zinc-50">{product.name}</span>
+                <span className="text-brand-cream">{product.name}</span>
               </nav>
 
               <div className="flex flex-col gap-10 lg:flex-row">
                 <div className="lg:w-[60%]">
-                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-800">
+                  <div className="aspect-square w-full overflow-hidden rounded-lg bg-brand-charcoal/30">
                     {product.image ? (
                       <img
                         src={product.image}
@@ -127,7 +125,7 @@ export default function ProductDetailPage() {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+                      <div className="flex h-full w-full items-center justify-center text-sm text-brand-cream/50">
                         Sin imagen
                       </div>
                     )}
@@ -135,65 +133,77 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex flex-col gap-4 lg:w-[40%]">
-                  <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+                  <h1 className="font-display text-2xl uppercase tracking-tight text-brand-cream sm:text-3xl">
                     {product.name}
                   </h1>
 
                   {product.rating && (
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="text-sm text-brand-cream/70">
                       {renderStars(parseFloat(product.rating))} {product.rating}
                       {product.reviews_count && ` (${product.reviews_count} reviews)`}
                     </p>
                   )}
 
-                  <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                  <p className="font-sans text-2xl font-bold text-brand-gold">
                     {formatCLP(parseInt(product.price))}
                   </p>
 
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    {product.description}
-                  </p>
+                  <p className="text-sm text-brand-cream/70">{product.description}</p>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <label className="flex flex-col gap-1">
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400">Talla</span>
-                      <select
-                        value={selectedSize}
-                        onChange={(e) => setSelectedSize(e.target.value)}
-                        className="rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-                      >
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
+                        Talla
+                      </span>
+                      <div className="flex flex-wrap gap-2">
                         {sizes.map((size) => (
-                          <option key={size} value={size}>
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => setSelectedSize(size)}
+                            className={`flex h-8 w-8 items-center justify-center rounded border text-xs transition-colors ${
+                              selectedSize === size
+                                ? "border-brand-gold bg-brand-gold text-brand-black"
+                                : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
+                            }`}
+                          >
                             {size}
-                          </option>
+                          </button>
                         ))}
-                      </select>
-                    </label>
+                      </div>
+                    </div>
 
-                    <label className="flex flex-col gap-1">
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400">Color</span>
-                      <select
-                        value={selectedColor}
-                        onChange={(e) => setSelectedColor(e.target.value)}
-                        className="rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
-                      >
+                    <div>
+                      <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
+                        Color
+                      </span>
+                      <div className="flex flex-wrap gap-2">
                         {colors.map((color) => (
-                          <option key={color} value={color}>
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => setSelectedColor(color)}
+                            className={`rounded border px-3 py-1.5 text-xs transition-colors ${
+                              selectedColor === color
+                                ? "border-brand-gold bg-brand-gold text-brand-black"
+                                : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
+                            }`}
+                          >
                             {color}
-                          </option>
+                          </button>
                         ))}
-                      </select>
-                    </label>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                       type="button"
                       onClick={handleAddToCart}
-                      className={`flex-1 rounded-full px-4 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors ${
+                      className={`flex-1 rounded border py-2 text-sm font-display uppercase tracking-wide transition-colors ${
                         isAdded
-                          ? "bg-green-600 hover:bg-green-500"
-                          : "bg-orange-600 hover:bg-orange-500"
+                          ? "border-brand-gold bg-brand-gold text-brand-black"
+                          : "border-brand-red bg-transparent text-brand-red hover:bg-brand-red hover:text-brand-cream"
                       }`}
                     >
                       {isAdded ? "¡Agregado!" : "Agregar al Carrito"}
@@ -202,28 +212,26 @@ export default function ProductDetailPage() {
                     <button
                       type="button"
                       onClick={() => router.back()}
-                      className="flex-1 rounded-full border border-zinc-300 px-4 py-3 text-sm font-bold uppercase tracking-wide text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      className="flex-1 rounded border border-brand-charcoal py-2 text-sm font-display uppercase tracking-wide text-brand-cream transition-colors hover:border-brand-gold hover:text-brand-gold"
                     >
                       Volver
                     </button>
                   </div>
 
                   {(product.material || product.care_instruction) && (
-                    <div className="mt-4 flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-                      <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-900 dark:text-zinc-50">
+                    <div className="mt-4 flex flex-col gap-2 rounded-lg border border-brand-charcoal/40 bg-brand-surface p-4">
+                      <h2 className="font-display text-sm uppercase tracking-wide text-brand-gold">
                         Material &amp; Care
                       </h2>
                       {product.material && (
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                          <span className="font-semibold text-zinc-900 dark:text-zinc-50">
-                            Material:{" "}
-                          </span>
+                        <p className="text-sm text-brand-cream/70">
+                          <span className="font-semibold text-brand-cream">Material: </span>
                           {product.material}
                         </p>
                       )}
                       {product.care_instruction && (
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                          <span className="font-semibold text-zinc-900 dark:text-zinc-50">
+                        <p className="text-sm text-brand-cream/70">
+                          <span className="font-semibold text-brand-cream">
                             Care Instructions:{" "}
                           </span>
                           {product.care_instruction}
@@ -236,7 +244,7 @@ export default function ProductDetailPage() {
 
               {relatedProducts.length > 0 && (
                 <section className="mt-16">
-                  <h2 className="mb-6 text-xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+                  <h2 className="mb-6 font-display text-xl uppercase tracking-tight text-brand-cream">
                     You might also like
                   </h2>
                   <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:place-items-stretch lg:grid-cols-3">
@@ -248,6 +256,7 @@ export default function ProductDetailPage() {
                         description={related.description}
                         price={parseInt(related.price)}
                         image={related.image}
+                        category={related.category}
                       />
                     ))}
                   </div>

@@ -18,9 +18,9 @@ export default function Header() {
   const cartCount = getCartCount();
 
   return (
-    <header className="sticky top-0 z-50 bg-black text-white">
+    <header className="sticky top-0 z-50 border-b border-brand-charcoal/40 bg-brand-black text-brand-cream">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-xl font-bold tracking-tight">
+        <Link href="/" className="font-display text-2xl uppercase tracking-tight text-brand-cream">
           Tu Marca Streetwear
         </Link>
 
@@ -29,7 +29,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium uppercase tracking-wide text-white/80 transition-colors hover:text-white"
+              className="font-sans text-sm uppercase tracking-wide text-brand-cream/80 transition-colors hover:text-brand-gold"
             >
               {link.label}
             </Link>
@@ -53,7 +53,7 @@ export default function Header() {
               />
             </svg>
             {cartCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-red text-xs font-bold text-brand-cream">
                 {cartCount}
               </span>
             )}
@@ -93,13 +93,13 @@ export default function Header() {
       </div>
 
       {isMenuOpen && (
-        <nav className="flex flex-col gap-1 border-t border-white/10 px-4 pb-4 md:hidden">
+        <nav className="flex flex-col gap-1 border-t border-brand-charcoal/40 px-4 pb-4 md:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setIsMenuOpen(false)}
-              className="rounded-md px-2 py-3 text-sm font-medium uppercase tracking-wide text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-md px-2 py-3 font-sans text-sm uppercase tracking-wide text-brand-cream/80 transition-colors hover:bg-brand-charcoal/30 hover:text-brand-gold"
             >
               {link.label}
             </Link>

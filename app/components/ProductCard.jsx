@@ -6,13 +6,18 @@ function formatCLP(price) {
   return `$${Math.round(price).toLocaleString("es-CL")}`;
 }
 
-export default function ProductCard({ slug, image, name, description, price }) {
+export default function ProductCard({ slug, image, name, description, price, category }) {
   return (
     <Link
       href={`/product/${slug}`}
-      className="group flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
+      className="group flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-brand-charcoal/40 bg-brand-surface transition-colors hover:border-brand-gold/60"
     >
-      <div className="aspect-square w-full overflow-hidden bg-zinc-200 dark:bg-zinc-800">
+      <div className="relative aspect-square w-full overflow-hidden bg-brand-charcoal/30">
+        {category && (
+          <span className="absolute left-3 top-3 rounded bg-brand-black/80 px-2 py-1 text-xs uppercase text-brand-gold">
+            {category}
+          </span>
+        )}
         {image ? (
           <img
             src={image}
@@ -20,7 +25,7 @@ export default function ProductCard({ slug, image, name, description, price }) {
             className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500 dark:text-zinc-400">
+          <div className="flex h-full w-full items-center justify-center text-xs text-brand-cream/50">
             Sin imagen
           </div>
         )}
@@ -28,15 +33,15 @@ export default function ProductCard({ slug, image, name, description, price }) {
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 sm:text-base">
+          <h3 className="font-display text-lg uppercase text-brand-cream">
             {name}
           </h3>
-          <p className="truncate text-xs text-zinc-500 dark:text-zinc-400 sm:text-sm">
+          <p className="truncate text-xs text-brand-cream/60 sm:text-sm">
             {description}
           </p>
         </div>
 
-        <p className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+        <p className="font-sans text-lg font-bold text-brand-gold">
           {formatCLP(price)}
         </p>
       </div>
