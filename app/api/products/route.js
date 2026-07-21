@@ -12,7 +12,9 @@ const CREDENTIALS_PATH = path.join(
 
 export async function GET(request) {
   try {
-    const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf8"));
+    const credentials = process.env.GOOGLE_CREDENTIALS_JSON
+      ? JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON)
+      : JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf8"));
 
     const auth = new google.auth.GoogleAuth({
       credentials,

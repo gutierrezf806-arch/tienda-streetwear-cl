@@ -9,7 +9,7 @@ const navLinks = [
   { href: "/urban-code", label: "Urban Code" },
   { href: "/no-limits", label: "No Limits" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
 export default function Header() {
