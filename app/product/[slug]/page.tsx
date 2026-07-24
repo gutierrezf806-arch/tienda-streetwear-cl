@@ -8,8 +8,12 @@ import Footer from "../../components/Footer.jsx";
 import ProductCard from "../../components/ProductCard.jsx";
 import { useCart } from "../../hooks/useCart.js";
 
-const sizes = ["S", "M", "L", "XL"];
-const colors = ["Negro", "Blanco", "Azul", "Rojo"];
+function parseOptions(value: string) {
+  return value
+    .split(",")
+    .map((option) => option.trim())
+    .filter(Boolean);
+}
 
 type Product = {
   id: string;
@@ -43,9 +47,10 @@ export default function ProductDetailPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState(sizes[0]);
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
   const [isAdded, setIsAdded] = useState(false);
+  const [loadedProductId, setLoadedProductId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     fetch("/api/products")
@@ -62,6 +67,15 @@ export default function ProductDetailPage() {
   }, []);
 
   const product = products.find((item) => item.slug === slug);
+  const availableSizes = product ? parseOptions(product.size) : [];
+  const availableColors = product ? parseOptions(product.color) : [];
+
+  if (product && product.id !== loadedProductId) {
+    setLoadedProductId(product.id);
+    setSelectedSize(availableSizes[0] ?? "");
+    setSelectedColor(availableColors[0] ?? "");
+  }
+
   const relatedProducts = product
     ? products
         .filter((item) => item.category === product.category && item.slug !== product.slug)
@@ -151,49 +165,53 @@ export default function ProductDetailPage() {
                   <p className="text-sm text-brand-cream/70">{product.description}</p>
 
                   <div className="flex flex-col gap-4">
-                    <div>
-                      <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
-                        Talla
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {sizes.map((size) => (
-                          <button
-                            key={size}
-                            type="button"
-                            onClick={() => setSelectedSize(size)}
-                            className={`flex h-8 w-8 items-center justify-center rounded border text-xs transition-colors ${
-                              selectedSize === size
-                                ? "border-brand-gold bg-brand-gold text-brand-black"
-                                : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
-                            }`}
-                          >
-                            {size}
-                          </button>
-                        ))}
+                    {availableSizes.length > 0 && (
+                      <div>
+                        <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
+                          Talla
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {availableSizes.map((size) => (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => setSelectedSize(size)}
+                              className={`flex h-8 w-8 items-center justify-center rounded border text-xs transition-colors ${
+                                selectedSize === size
+                                  ? "border-brand-gold bg-brand-gold text-brand-black"
+                                  : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
-                    <div>
-                      <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
-                        Color
-                      </span>
-                      <div className="flex flex-wrap gap-2">
-                        {colors.map((color) => (
-                          <button
-                            key={color}
-                            type="button"
-                            onClick={() => setSelectedColor(color)}
-                            className={`rounded border px-3 py-1.5 text-xs transition-colors ${
-                              selectedColor === color
-                                ? "border-brand-gold bg-brand-gold text-brand-black"
-                                : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
-                            }`}
-                          >
-                            {color}
-                          </button>
-                        ))}
+                    {availableColors.length > 0 && (
+                      <div>
+                        <span className="mb-2 block text-xs uppercase tracking-wide text-brand-cream/60">
+                          Color
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {availableColors.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() => setSelectedColor(color)}
+                              className={`rounded border px-3 py-1.5 text-xs transition-colors ${
+                                selectedColor === color
+                                  ? "border-brand-gold bg-brand-gold text-brand-black"
+                                  : "border-brand-charcoal text-brand-cream hover:border-brand-gold hover:text-brand-gold"
+                              }`}
+                            >
+                              {color}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row">
